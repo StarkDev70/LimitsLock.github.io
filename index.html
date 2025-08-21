@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Limits Lock - Fangame de Blue Lock</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --blue-lock-primary: #0c1e3e;
+            --blue-lock-accent: #1d4cb9;
+            --blue-lock-secondary: #0c2c6e;
+            --blue-lock-light: #4a86ff; /* Azul más claro para mejor contraste */
+            --blue-lock-bright: #6ba3ff; /* Azul aún más brillante */
+            --blue-lock-dark: #051a3f;
+            --text-light: #ffffff;
+            --text-dark: #333333;
+            --gradient-blue: linear-gradient(to bottom, #4a86ff, #2d5bb9, #0c2c6e);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            color: var(--text-light);
+            background-image: 
+                /* Imagen de fondo con overlay azul para mejor contraste */
+                linear-gradient(rgba(12, 30, 62, 0.85), rgba(12, 30, 62, 0.85)),
+                url('https://images.unsplash.com/photo-1552667466-07770ae110d0?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Header y Navegación */
+        header {
+            background-color: rgba(12, 30, 62, 0.95);
+            padding: 15px 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo img {
+            height: 50px;
+            margin-right: 10px;
+        }
+        
+        .logo h1 {
+            font-size: 24px;
+            font-weight: 800;
+            background: var(--gradient-blue);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+        
+        nav ul li {
+            margin-left: 25px;
+        }
+        
+        nav ul li a {
+            color: var(--text-light);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            transition: color 0.3s;
+            position: relative;
+        }
+        
+        nav ul li a:hover {
+            color: var(--blue-lock-bright);
+        }
+        
+        nav ul li a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -5px;
+            left: 0;
+            background-color: var(--blue-lock-bright);
+            transition: width 0.3s;
+        }
+        
+        nav ul li a:hover::after {
+            width: 100%;
+        }
+        
+        /* Hero Section */
+        .hero {
+            padding: 150px 0 100px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+        
+        .hero h2 {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--text-light);
+        }
+        
+        .hero h2 span {
+            background: var(--gradient-blue);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto 30px;
+            line-height: 1.6;
+            color: var(--text-light);
+        }
+        
+        .cta-button {
+            display: inline-block;
+            padding: 15px 40px;
+            background: linear-gradient(45deg, var(--blue-lock-accent), var(--blue-lock-secondary));
+            color: white;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.2rem;
+            border-radius: 50px;
+            text-transform: uppercase;
+            transition: transform 0.3s, box-shadow 0.3s;
+            box-shadow: 0 4px 15px rgba(29, 76, 185, 0.6);
+            margin: 10px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(29, 76, 185, 0.8);
+        }
+        
+        .cta-button.secondary {
+            background: transparent;
+            border: 2px solid var(--blue-lock-bright);
+            color: var(--blue-lock-bright);
+        }
+        
+        .pixel-art {
+            image-rendering: pixelated;
+            margin: 30px auto;
+            display: block;
+            max-width: 80%;
+            border: 4px solid var(--blue-lock-bright);
+            box-shadow: 0 0 20px rgba(58, 113, 255, 0.7);
+            border-radius: 10px;
+        }
+        
+        /* Secciones */
+        section {
+            padding: 80px 0;
+            background-color: rgba(12, 30, 62, 0.8);
+            margin: 20px 0;
+            border-radius: 15px;
+        }
+        
+        section h2 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 50px;
+            text-transform: uppercase;
+            background: var(--gradient-blue);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            position: relative;
+        }
+        
+        section h2::after {
+            content: '';
+            position: absolute;
+            width: 100px;
+            height: 4px;
+            background: var(--blue-lock-bright);
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            box-shadow: 0 0 10px rgba(58, 113, 255, 0.5);
+        }
+        
+        /* Características */
+        .features {
+            background-color: rgba(12, 30, 62, 0.7);
+            border-top: 2px solid var(--blue-lock-secondary);
+            border-bottom: 2px solid var(--blue-lock-secondary);
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        
+        .feature-card {
+            background: rgba(29, 76, 185, 0.3);
+            border-radius: 10px;
+            padding: 25px;
+            text-align: center;
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: 1px solid var(--blue-lock-bright);
+            backdrop-filter: blur(5px);
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 25px rgba(29, 76, 185, 0.6);
+        }
+        
+        .feature-card i {
+            font-size: 3rem;
+            color: var(--blue-lock-bright);
+            margin-bottom: 20px;
+        }
+        
+        .feature-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: var(--blue-lock-bright);
+        }
+        
+        /* Capturas */
+        .screenshots {
+            text-align: center;
+        }
+        
+        .screenshot-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .screenshot-item {
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+            transition: transform 0.3s;
+            position: relative;
+            height: 200px;
+            background: linear-gradient(45deg, var(--blue-lock-primary), var(--blue-lock-secondary));
+            border: 2px solid var(--blue-lock-bright);
+        }
+        
+        .screenshot-item:hover {
+            transform: scale(1.05);
+        }
+        
+        .screenshot-placeholder {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: var(--blue-lock-bright);
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        /* Apoyar */
+        .monetization {
+            background-color: rgba(12, 30, 62, 0.7);
+            border-top: 2px solid var(--blue-lock-secondary);
+            border-bottom: 2px solid var(--blue-lock-secondary);
+            text-align: center;
+        }
+        
+        .monetization-options {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin-top: 40px;
+        }
+        
+        .monetization-option {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 25px;
+            width: 280px;
+            text-align: center;
+            backdrop-filter: blur(5px);
+            border: 1px solid var(--blue-lock-bright);
+        }
+        
+        .monetization-option h3 {
+            color: var(--blue-lock-bright);
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+        
+        .monetization-option p {
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+        
+        /* Publicidad optimizada */
+        .ad-container {
+            background: rgba(29, 76, 185, 0.3);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 40px auto;
+            text-align: center;
+            border: 1px solid var(--blue-lock-bright);
+            max-width: 728px;
+            transition: all 0.3s ease;
+        }
+        
+        .ad-container:hover {
+            background: rgba(29, 76, 185, 0.4);
+        }
+        
+        .ad-label {
+            display: block;
+            font-size: 0.8rem;
+            color: var(--blue-lock-bright);
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .ad-placeholder {
+            width: 100%;
+            height: 90px;
+            background: rgba(58, 113, 255, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--blue-lock-bright);
+            font-weight: bold;
+            border-radius: 5px;
+        }
+        
+        .ad-sidebar {
+            position: fixed;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 160px;
+            background: rgba(29, 76, 185, 0.3);
+            border-radius: 10px 0 0 10px;
+            padding: 15px 10px;
+            border: 1px solid var(--blue-lock-bright);
+            border-right: none;
+            z-index: 999;
+        }
+        
+        .ad-sidebar .ad-placeholder {
+            height: 600px;
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+        }
+        
+        /* Footer */
+        footer {
+            background-color: rgba(12, 30, 62, 0.95);
+            padding: 40px 0 20px;
+            text-align: center;
+            border-radius: 15px 15px 0 0;
+        }
+        
+        .footer-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .footer-logo {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            background: var(--gradient-blue);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .social-links {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .social-links a {
+            color: var(--text-light);
+            font-size: 1.5rem;
+            transition: color 0.3s;
+        }
+        
+        .social-links a:hover {
+            color: var(--blue-lock-bright);
+        }
+        
+        .disclaimer {
+            margin-top: 20px;
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+            max-width: 800px;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            nav ul {
+                margin-top: 20px;
+                justify-content: center;
+            }
+            
+            nav ul li {
+                margin: 0 10px;
+            }
+            
+            .hero h2 {
+                font-size: 2.5rem;
+            }
+            
+            .features-grid,
+            .screenshot-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .monetization-options {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .ad-sidebar {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Barra lateral de publicidad -->
+    <div class="ad-sidebar">
+        <span class="ad-label">Publicidad</span>
+        <div class="ad-placeholder" id="ad-sidebar">
+            Espacio publicitario (160x600)
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header>
+        <div class="container header-content">
+            <div class="logo">
+                <!-- Para colocar tu imagen como logo: -->
+                < <img src="Limits Lock.png" alt="Limits Lock Logo">
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#inicio">Inicio</a></li>
+                    <li><a href="#caracteristicas">Características</a></li>
+                    <li><a href="#capturas">Capturas</a></li>
+                    <li><a href="#descargar">Descargar</a></li>
+                    <li><a href="#apoyar">Apoyar</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="inicio" class="hero">
+        <div class="container hero-content">
+            <h2>Conviértete en el <span>mejor delantero</span></h2>
+            <p>Limits Lock es un fangame de Blue Lock con estilo pixel art donde deberás superar tus límites y demostrar que tienes lo necesario para convertirse en el egoísta que hará que Japón gane el mundial.</p>
+            <a href="#descargar" class="cta-button">Jugar Ahora</a>
+            <a href="#caracteristicas" class="cta-button secondary">Saber Más</a>
+            
+            <div class="pixel-art">
+                <img style="width:100%; height:200px"; src="Muestra1.jpg" alt="Imagen de muestra 1">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Banner de publicidad -->
+    <div class="container">
+        <div class="ad-container">
+            <span class="ad-label">Publicidad</span>
+            <div class="ad-placeholder" id="ad-banner">
+                Espacio para publicidad (728x90)
+            </div>
+        </div>
+    </div>
+
+    <!-- Características -->
+    <section id="caracteristicas" class="features">
+        <div class="container">
+            <h2>Características del Juego</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <i class="fas fa-futbol"></i>
+                    <h3>Gráficos Pixel Art</h3>
+                    <p>Disfruta de un estilo visual único inspirado en los clásicos juegos de fútbol retro con personajes y escenarios detallados.</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-running"></i>
+                    <h3>Gameplay Intenso</h3>
+                    <p>Controla a tu jugador en emocionantes partidos llenos de acción donde cada decisión cuenta.</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-trophy"></i>
+                    <h3>Sistema de Evolución</h3>
+                    <p>Mejora las habilidades de tu personaje a medida que avanzas y desbloquea técnicas especiales.</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-users"></i>
+                    <h3>Modos de Juego</h3>
+                    <p>Disfruta de diversos modos de juego: historia, torneos, amistosos y el modo Blue Lock definitivo.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Capturas de pantalla -->
+    <section id="capturas" class="screenshots">
+        <div class="container">
+            <h2>Capturas de Pantalla</h2>
+            <div class="screenshot-grid">
+                <div class="screenshot-item">
+                    <div class="screenshot-placeholder">Captura 1 - Menú Principal</div>
+                </div>
+                <div class="screenshot-item">
+                    <div class="screenshot-placeholder">Captura 2 - Partido</div>
+                </div>
+                <div class="screenshot-item">
+                    <div class="screenshot-placeholder">Captura 3 - Selección</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Descarga -->
+    <section id="descargar" class="download">
+        <div class="container" style="text-align: center;">
+            <h2>Descarga Limits Lock</h2>
+            <p style="font-size: 1.2rem; max-width: 700px; margin: 0 auto 30px;">Haz clic en el botón de abajo para descargar el juego y comenzar tu camino hacia la cima del fútbol mundial.</p>
+            <a href="#" class="cta-button">Descargar para Windows</a>
+            <a href="#" class="cta-button secondary">Versión Android</a>
+            
+            <div style="margin-top: 40px; background: rgba(29, 76, 185, 0.3); padding: 20px; border-radius: 10px; border: 1px solid var(--blue-lock-bright);">
+                <h3 style="color: var(--blue-lock-bright); margin-bottom: 15px;">Requisitos del Sistema</h3>
+                <p>Windows 7 o superior / Android 5.0 o superior</p>
+                <p>2GB RAM, 500MB de espacio libre</p>
+                <p>Tarjeta gráfica compatible con OpenGL 2.1</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Apoyar -->
+    <section id="apoyar" class="monetization">
+        <div class="container">
+            <h2>Apoya el Proyecto</h2>
+            <p style="font-size: 1.2rem; max-width: 700px; margin: 0 auto;">Como desarrollador independiente en Venezuela, tu apoyo es crucial para continuar mejorando el juego y creando nuevo contenido.</p>
+            
+            <div class="monetization-options">
+                <div class="monetization-option">
+                    <h3>Donaciones</h3>
+                    <p>Apoya directamente el desarrollo del juego mediante donaciones en bolívares o criptomonedas.</p>
+                    <a href="#" class="cta-button">Donar</a>
+                </div>
+                
+                <div class="monetization-option">
+                    <h3>Publicidad</h3>
+                    <p>Habilita anuncios no intrusivos dentro del juego para apoyar de forma gratuita.</p>
+                    <a href="#" class="cta-button secondary">Más Info</a>
+                </div>
+                
+                <div class="monetization-option">
+                    <h3>Compartir</h3>
+                    <p>Ayuda difundiendo el juego en redes sociales. ¡El boca a boca también es invaluable!</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-discord"></i></a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Banner de publicidad rectangular -->
+            <div class="ad-container">
+                <span class="ad-label">Publicidad</span>
+                <div class="ad-placeholder" style="height: 180px;">
+                    Espacio para publicidad (728x180)
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container footer-content">
+            <div class="footer-logo">Limits Lock</div>
+            
+            <div class="social-links">
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+                <a href="#"><i class="fab fa-youtube"></i></a>
+                <a href="#"><i class="fab fa-discord"></i></a>
+                <a href="#"><i class="fab fa-tiktok"></i></a>
+            </div>
+            
+            <p>© 2025 Limits Lock - Fangame de Blue Lock. Todos los derechos reservados a los respectivos autores.</p>
+            
+            <div class="disclaimer">
+                <p>Limits Lock es un juego creado por fans y no está afiliado oficialmente con Blue Lock o sus creadores originales. Este proyecto es sin ánimo de lucro y tiene como único objetivo el entretenimiento y homenajear la obra original.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Código para implementar publicidad
+        document.addEventListener('DOMContentLoaded', function() {
+            // Simulación de carga de anuncios después de 2 segundos
+            setTimeout(() => {
+                const adContainers = document.querySelectorAll('.ad-placeholder');
+                adContainers.forEach(container => {
+                    container.innerHTML = '<span style="color:#4a86ff;"><i class="fas fa-ad" style="font-size:2rem;margin-bottom:10px;"></i><br>Anuncio cargado</span>';
+                    container.style.background = 'rgba(58, 113, 255, 0.2)';
+                });
+            }, 2000);
+        });
+    </script>
+</body>
+</html>
